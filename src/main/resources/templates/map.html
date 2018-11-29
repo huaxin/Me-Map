@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>地图</title>
+  <!-- Tell the browser to be responsive to screen width -->
+  <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+  <link rel="stylesheet" href="${request.contextPath}/statics/css/bootstrap.min.css">
+  <link rel="stylesheet" href="${request.contextPath}/statics/css/font-awesome.min.css">
+  <link rel="stylesheet" href="${request.contextPath}/statics/css/AdminLTE.min.css">
+  <!-- AdminLTE Skins. Choose a skin from the css/skins
+       folder instead of downloading all of them to reduce the load. -->
+  <link rel="stylesheet" href="${request.contextPath}/statics/css/all-skins.min.css">
+  <link rel="stylesheet" href="${request.contextPath}/statics/css/main.css">
+  <link rel="stylesheet" href="${request.contextPath}/statics/plugins/leaflet/leaflet.css"/>
+  <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+  <!--[if lt IE 9]>
+  <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+  <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+  <![endif]-->
+</head>
+<!-- ADD THE CLASS layout-boxed TO GET A BOXED LAYOUT -->
+<body class="hold-transition skin-blue">
+  <header class="main-header">
+  </header>
+
+
+    <!-- Main content -->
+    <section class="content" id="map" style="background:#fff;min-height: 622px;">
+
+    </section>
+    <!-- /.content -->
+  <footer class="main-footer">
+    <div class="pull-right hidden-xs">
+      Version 3.2.0
+    </div>
+    Copyright &copy; 2018 <a href="http://www.renren.io" target="_blank">renren.io</a> All Rights Reserved
+  </footer>
+
+<script src="${request.contextPath}/statics/libs/jquery.min.js"></script>
+<script src="${request.contextPath}/statics/libs/vue.min.js"></script>
+<script src="${request.contextPath}/statics/libs/router.js"></script>
+<script src="${request.contextPath}/statics/libs/bootstrap.min.js"></script>
+<script src="${request.contextPath}/statics/libs/app.js"></script>
+<script src="${request.contextPath}/statics/plugins/layer/layer.js"></script>
+<script src="${request.contextPath}/statics/plugins/leaflet/leaflet.js"></script>
+<script src="${request.contextPath}/statics/plugins/echart/echarts.common.min.js"></script>
+<script src="${request.contextPath}/statics/libs/leaflet.ChineseTmsProviders.js"></script>
+<script src="${request.contextPath}/statics/libs/leaflet.Legend.js"></script>
+<script src="${request.contextPath}/statics/js/index.js"></script>
+<script>
+    /**
+     * 智图地图内容
+     */
+    var normalm1 = L.tileLayer.chinaProvider('Geoq.Normal.Map', {
+        maxZoom: 18,
+        minZoom: 5
+    });
+    var normalm2 = L.tileLayer.chinaProvider('Geoq.Normal.Color', {
+        maxZoom: 18,
+        minZoom: 5
+    });
+    var normalm3 = L.tileLayer.chinaProvider('Geoq.Normal.PurplishBlue', {
+        maxZoom: 18,
+        minZoom: 5
+    });
+    var normalm4 = L.tileLayer.chinaProvider('Geoq.Normal.Gray', {
+        maxZoom: 18,
+        minZoom: 5
+    });
+    var normalm5 = L.tileLayer.chinaProvider('Geoq.Normal.Warm', {
+        maxZoom: 18,
+        minZoom: 5
+    });
+    var normalm6 = L.tileLayer.chinaProvider('Geoq.Normal.Cold', {
+        maxZoom: 18,
+        minZoom: 5
+    });
+    /**
+     * 天地图内容
+     */
+    var normalm = L.tileLayer.chinaProvider('TianDiTu.Normal.Map', {
+            maxZoom: 18,
+            minZoom: 5
+        }),
+        normala = L.tileLayer.chinaProvider('TianDiTu.Normal.Annotion', {
+            maxZoom: 18,
+            minZoom: 5
+        }),
+        imgm = L.tileLayer.chinaProvider('TianDiTu.Satellite.Map', {
+            maxZoom: 18,
+            minZoom: 5
+        }),
+        imga = L.tileLayer.chinaProvider('TianDiTu.Satellite.Annotion', {
+            maxZoom: 18,
+            minZoom: 5
+        });
+
+    var normal = L.layerGroup([normalm, normala]),
+        image = L.layerGroup([imgm, imga]);
+    /**
+     * 谷歌
+     */
+    var normalMap = L.tileLayer.chinaProvider('Google.Normal.Map', {
+            maxZoom: 18,
+            minZoom: 5
+        }),
+        satelliteMap = L.tileLayer.chinaProvider('Google.Satellite.Map', {
+            maxZoom: 18,
+            minZoom: 5
+        });
+    /**
+     * 高德地图
+     */
+    var Gaode = L.tileLayer.chinaProvider('GaoDe.Normal.Map', {
+        maxZoom: 18,
+        minZoom: 5
+    });
+    var Gaodimgem = L.tileLayer.chinaProvider('GaoDe.Satellite.Map', {
+        maxZoom: 18,
+        minZoom: 5
+    });
+    var Gaodimga = L.tileLayer.chinaProvider('GaoDe.Satellite.Annotion', {
+        maxZoom: 18,
+        minZoom: 5
+    });5
+    var Gaodimage = L.layerGroup([Gaodimgem, Gaodimga]);
+
+
+
+    var baseLayers = {
+        "高德地图": Gaode,
+        "高德影像": Gaodimage,
+        "谷歌地图": normalMap,
+        "谷歌影像": satelliteMap,
+        "智图地图": normalm1,
+        "智图多彩": normalm2,
+        "智图午夜蓝": normalm3,
+        "智图灰色": normalm4,
+        "智图暖色": normalm5,
+        "智图冷色": normalm6,
+        "天地图": normal,
+        "天地图影像": image
+    }
+
+    var map = L.map("map", {
+        center: [22.764869, 113.507509],
+        zoom: 15,
+        layers: [Gaode],
+        zoomControl: false
+    });
+
+    L.renderLegend(map,{
+        orient: 'vertical',
+        left: 'left',
+        width: "90px",
+        height: "150px",
+        data: ['直接访问', '邮件营销', '联盟广告', '视频广告', '搜索引擎', '定向销售']
+    });
+
+    /*
+    var populationLegend = L.control({position: 'bottomright'});
+    populationLegend.onAdd = function (map) {
+        var div = L.DomUtil.create('div', 'info legend');
+        div.innerHTML +='<img src="statics/image/legend.png" alt="legend" width="134" height="147">';
+        return div;
+    };
+    populationLegend.addTo(map);
+    map.on('overlayadd', function (eventLayer) {
+        // Switch to the Population legend...
+        if (eventLayer.name === 'Population') {
+            this.removeControl(populationChangeLegend);
+            populationLegend.addTo(this);
+        } else { // Or switch to the Population Change legend...
+            this.removeControl(populationLegend);
+            populationChangeLegend.addTo(this);
+        }
+    });
+    */
+
+    L.control.layers(baseLayers, null).addTo(map);
+    L.control.zoom({
+        zoomInTitle: '放大',
+        zoomOutTitle: '缩小'
+    }).addTo(map);
+
+    var points=[]
+    var lines=new L.polyline(points)
+    var tempLines=new L.polyline([])
+    map.on('click', onClick);    //点击地图
+    map.on('dblclick',onDoubleClick);
+
+    function onClick(e)
+    {
+
+        points.push([e.latlng.lat,e.latlng.lng])
+        lines.addLatLng(e.latlng)
+        map.addLayer(lines)
+        map.addLayer(L.circle(e.latlng,{color:'#ff0000',fillColor:'ff0000',fillOpacity:1}))
+        map.on('mousemove',onMove)//双击地图
+
+    }
+    function onMove(e) {
+        if(points.length>0) {
+            ls=[points[points.length-1],[e.latlng.lat,e.latlng.lng]]
+            tempLines.setLatLngs(ls)
+            map.addLayer(tempLines)
+        }
+    }
+
+    function onDoubleClick(e)
+    {
+        L.polyline(points).addTo(map)
+        points=[]
+        lines=new L.polyline(points)
+        map.off('mousemove')
+    }
+</script>
+</body>
+</html>

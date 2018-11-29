@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.sys.dao.CdpDictDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.renren.modules.sys.entity.CdpDictEntity" id="cdpDictMap">
+        <result property="id" column="id"/>
+        <result property="code" column="code"/>
+        <result property="name" column="name"/>
+        <result property="description" column="description"/>
+        <result property="createdBy" column="created_by"/>
+        <result property="createdName" column="created_name"/>
+        <result property="creationDate" column="creation_date"/>
+        <result property="lastUpdatedBy" column="last_updated_by"/>
+        <result property="lastUpdatedName" column="last_updated_name"/>
+        <result property="lastUpdateDate" column="last_update_date"/>
+        <result property="attribute1" column="attribute1"/>
+        <result property="attribute2" column="attribute2"/>
+        <result property="attribute3" column="attribute3"/>
+        <result property="attribute4" column="attribute4"/>
+        <result property="attribute5" column="attribute5"/>
+        <result property="attribute6" column="attribute6"/>
+    </resultMap>
+
+
+</mapper>

@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>字典表</title>
+<#include "/header.html">
+</head>
+<body>
+<div id="rrapp" v-cloak>
+    <div v-show="showModule == 1">
+        <div class="grid-btn">
+			<#if shiro.hasPermission("sys:cdpdict:save")>
+            <a class="btn btn-primary" @click="add"><i class="fa fa-plus"></i>&nbsp;新增</a>
+			</#if>
+			<#if shiro.hasPermission("sys:cdpdict:update")>
+            <a class="btn btn-primary" @click="update"><i class="fa fa-pencil-square-o"></i>&nbsp;修改</a>
+			</#if>
+			<#if shiro.hasPermission("sys:cdpdict:delete")>
+            <a class="btn btn-primary" @click="del"><i class="fa fa-trash-o"></i>&nbsp;删除</a>
+			</#if>
+        </div>
+        <table id="jqGrid"></table>
+        <div id="jqGridPager"></div>
+    </div>
+
+    <div v-show="showModule == 2 || showModule == 3" class="panel panel-default">
+        <div class="panel-heading">{{title}}</div>
+        <form class="form-horizontal">
+					<div class="form-group">
+                        <div class="col-sm-2 control-label">编码</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="cdpDict.code" placeholder="编码"/>
+                        </div>
+                    </div>
+		            <div class="form-group">
+                        <div class="col-sm-2 control-label">名称</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="cdpDict.name" placeholder="名称"/>
+                        </div>
+                    </div>
+		            <div class="form-group">
+                        <div class="col-sm-2 control-label">描述</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="cdpDict.description" placeholder="描述"/>
+                        </div>
+                    </div>
+		            <div class="form-group">
+                        <div class="col-sm-2 control-label">创建ID</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="cdpDict.createdBy" placeholder="创建ID"/>
+                        </div>
+                    </div>
+		            <div class="form-group">
+                        <div class="col-sm-2 control-label">创建人</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="cdpDict.createdName" placeholder="创建人"/>
+                        </div>
+                    </div>
+		            <div class="form-group">
+                        <div class="col-sm-2 control-label">创建时间</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="cdpDict.creationDate" placeholder="创建时间"/>
+                        </div>
+                    </div>
+		            <div class="form-group">
+                        <div class="col-sm-2 control-label">更新ID</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="cdpDict.lastUpdatedBy" placeholder="更新ID"/>
+                        </div>
+                    </div>
+		            <div class="form-group">
+                        <div class="col-sm-2 control-label">更新人</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="cdpDict.lastUpdatedName" placeholder="更新人"/>
+                        </div>
+                    </div>
+		            <div class="form-group">
+                        <div class="col-sm-2 control-label">更新时间</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="cdpDict.lastUpdateDate" placeholder="更新时间"/>
+                        </div>
+                    </div>
+			<div class="form-group">
+                <div class="col-sm-2 control-label"></div>
+                <input type="button" class="btn btn-primary" @click="saveOrUpdate" value="确定"/>
+                &nbsp;&nbsp;<input type="button" class="btn btn-warning" @click="reload" value="返回"/>
+            </div>
+        </form>
+    </div>
+    <div v-show="showModule == 3">
+        <div class="grid-btn">
+            <#if shiro.hasPermission("sys:cdpdictitem:save")>
+                <a class="btn btn-primary" @click="addItem"><i class="fa fa-plus"></i>&nbsp;新增子项</a>
+            </#if>
+            <#if shiro.hasPermission("sys:cdpdictitem:update")>
+                <a class="btn btn-primary" @click="updateItem"><i class="fa fa-pencil-square-o"></i>&nbsp;修改子项</a>
+            </#if>
+            <#if shiro.hasPermission("sys:cdpdictitem:delete")>
+                <a class="btn btn-primary" @click="delItem"><i class="fa fa-trash-o"></i>&nbsp;删除子项</a>
+            </#if>
+        </div>
+        <table id="itemJqGrid"></table>
+        <div id="itemJqGridPager"></div>
+    </div>
+
+    <div v-show="showModule == 4" class="panel panel-default">
+        <div class="panel-heading">{{title}}</div>
+        <form class="form-horizontal">
+            <div class="form-group">
+                <div class="col-sm-2 control-label">字典ID</div>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" v-model="cdpDictItem.dictId" placeholder="字典ID"/>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-2 control-label">条目名称</div>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" v-model="cdpDictItem.itemName" placeholder="条目名称"/>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-2 control-label">条目值</div>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" v-model="cdpDictItem.itemValue" placeholder="条目值"/>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-2 control-label">状态，1有效；0无效</div>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" v-model="cdpDictItem.status" placeholder="状态，1有效；0无效"/>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-2 control-label">顺序</div>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" v-model="cdpDictItem.orderNum" placeholder="顺序"/>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-2 control-label">创建人</div>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" v-model="cdpDictItem.createdBy" placeholder="创建人"/>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-2 control-label">创建人</div>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" v-model="cdpDictItem.createdName" placeholder="创建人"/>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-2 control-label">创建时间</div>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" v-model="cdpDictItem.creationDate" placeholder="创建时间"/>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-2 control-label">更新ID</div>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" v-model="cdpDictItem.lastUpdatedBy" placeholder="更新ID"/>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-2 control-label">更新名</div>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" v-model="cdpDictItem.lastUpdatedName" placeholder="更新名"/>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-2 control-label">更新时间</div>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" v-model="cdpDictItem.lastUpdateDate" placeholder="更新时间"/>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-2 control-label">描述</div>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" v-model="cdpDictItem.description" placeholder="描述"/>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-2 control-label"></div>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" v-model="cdpDictItem.attribute1" placeholder=""/>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-2 control-label"></div>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" v-model="cdpDictItem.attribute2" placeholder=""/>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-2 control-label"></div>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" v-model="cdpDictItem.attribute3" placeholder=""/>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-2 control-label"></div>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" v-model="cdpDictItem.attribute4" placeholder=""/>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-2 control-label"></div>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" v-model="cdpDictItem.attribute5" placeholder=""/>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-2 control-label"></div>
+                <input type="button" class="btn btn-primary" @click="saveOrUpdateItem" value="确定"/>
+                &nbsp;&nbsp;<input type="button" class="btn btn-warning" @click="reloadItems" value="返回"/>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<script src="${request.contextPath}/statics/libs/jquery.contextmenu.r2.js"></script>
+<script src="${request.contextPath}/statics/js/modules/sys/dictionary.js?_${.now?long}"></script>
+</body>
+</html>

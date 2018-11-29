@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.map.dao.MapDirDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.renren.modules.map.entity.MapDirEntity" id="mapDirMap">
+        <result property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="seq" column="seq"/>
+        <result property="status" column="status"/>
+        <result property="parentId" column="parent_id"/>
+        <result property="fullPath" column="full_path"/>
+        <result property="fullPathName" column="full_path_name"/>
+        <result property="createdBy" column="created_by"/>
+        <result property="createdName" column="created_name"/>
+        <result property="creationDate" column="creation_date"/>
+        <result property="lastUpdatedBy" column="last_updated_by"/>
+        <result property="lastUpdatedName" column="last_updated_name"/>
+        <result property="lastUpdateDate" column="last_update_date"/>
+        <result property="description" column="description"/>
+    </resultMap>
+
+    <select id="queryListByParentId" resultType="io.renren.modules.map.entity.MapDirEntity">
+		select * from map_dir where parent_id = #{parentId} order by `seq` asc
+	</select>
+
+    <!--<select id="queryNoParent" resultType="io.renren.modules.map.entity.MapDirEntity">
+		select * from map_dir where status = 1 order by `seq` asc
+	</select>-->
+
+    <select id="queryNoParent" resultType="io.renren.modules.map.entity.MapDirEntity">
+		select *,'catalog' as type from map_dir where status = 1 order by `seq` asc
+	</select>
+
+
+</mapper>

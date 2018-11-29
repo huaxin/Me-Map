@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+		<#include "/header.html">
+</head>
+<body>
+<div id="rrapp" v-cloak>
+    <div v-show="showList">
+        <div class="grid-btn">
+			<#if shiro.hasPermission("map:maplayer:save")>
+            <a class="btn btn-primary" @click="add"><i class="fa fa-plus"></i>&nbsp;新增</a>
+			</#if>
+			<#if shiro.hasPermission("map:maplayer:update")>
+            <a class="btn btn-primary" @click="update"><i class="fa fa-pencil-square-o"></i>&nbsp;修改</a>
+			</#if>
+			<#if shiro.hasPermission("map:maplayer:delete")>
+            <a class="btn btn-primary" @click="del"><i class="fa fa-trash-o"></i>&nbsp;删除</a>
+			</#if>
+        </div>
+        <div style="width: 100%;">
+            <ul id="menuTree" class="ztree" style="width: 15%;float:left;"></ul>
+            <div style="width: 85%;float:left;">
+                <table id="jqGrid"></table>
+            </div>
+        </div>
+        <div id="jqGridPager"></div>
+    </div>
+
+    <div v-show="!showList" class="panel panel-default">
+        <div class="panel-heading">{{title}}</div>
+        <form class="form-horizontal">
+		    <div class="form-group">
+                <div class="col-sm-2 control-label">图层服务名</div>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" v-model="mapLayer.layerName" placeholder="图层服务名"/>
+                </div>
+            </div>
+		    <div class="form-group">
+                <div class="col-sm-2 control-label">英文名</div>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" v-model="mapLayer.layerEnglishName" placeholder="英文名"/>
+                </div>
+            </div>
+		    <div class="form-group">
+                    <div class="col-sm-2 control-label">图层目录</div>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" style="cursor:pointer;" v-model="mapLayer.dirName" @click="dirTree" readonly="readonly" placeholder="一级目录"/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-2 control-label">别名</div>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" v-model="mapLayer.alias" placeholder="别名"/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-2 control-label">访问链接</div>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" v-model="mapLayer.layerUrl" placeholder="访问链接"/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-2 control-label">来源</div>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" v-model="mapLayer.source" placeholder="来源"/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-2 control-label">数据类型</div>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" v-model="mapLayer.layerType" placeholder="数据类型"/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-2 control-label">WFS命名空间</div>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" v-model="mapLayer.featureNameSpace" placeholder="WFS命名空间"/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-2 control-label">WFS要素类型</div>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" v-model="mapLayer.featureType" placeholder="WFS要素类型"/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-2 control-label">WFS版本</div>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" v-model="mapLayer.version" placeholder="WFS版本"/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-2 control-label">分辨率WMS</div>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" v-model="mapLayer.resolution" placeholder="分辨率WMS"/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-2 control-label">坐标系WMS</div>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" v-model="mapLayer.projection" placeholder="坐标系WMS"/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-2 control-label">地图范围WMS</div>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" v-model="mapLayer.bound" placeholder="地图范围WMS"/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-2 control-label">视野范围</div>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" v-model="mapLayer.extent" placeholder="视野范围"/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-2 control-label">图层名WMS</div>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" v-model="mapLayer.layers" placeholder="图层名WMS"/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-2 control-label">WMS瓦片尺寸</div>
+                    <div class="col-sm-10">
+                        <select v-model="mapLayer.tileSize" class="form-control">
+                            <option value="256,256">256,256</option>
+                            <option value="512,512">512,512</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-2 control-label">WMS(原点)</div>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" v-model="mapLayer.tileOrigin" placeholder="WMS(原点)"/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-2 control-label">地图角度</div>
+                    <div class="col-sm-10">
+                        <select v-model="mapLayer.angle" class="form-control">
+                            <option value="90">90</option>
+                            <option value="60">60</option>
+                            <option value="45">45</option>
+                            <option value="30">30</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-2 control-label">排序</div>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" v-model="mapLayer.seq" placeholder="排序"/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-2 control-label">是否显示</div>
+                    <div class="col-sm-10">
+                        <select v-model="mapLayer.display" class="form-control">
+                            <option value="0">隐藏</option>
+                            <option value="1">显示</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-2 control-label">状态</div>
+                    <div class="col-sm-10">
+                        <select v-model="mapLayer.status" class="form-control">
+                            <option value="0">不正常</option>
+                            <option value="1">正常</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-2 control-label">是否删除</div>
+                    <div class="col-sm-10">
+                        <select v-model="mapLayer.deleted" class="form-control">
+                            <option value="0">未删除</option>
+                            <option value="1">已删除</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-2 control-label">备注</div>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" v-model="mapLayer.description" placeholder="备注"/>
+                    </div>
+                </div>
+                <div class="form-group">
+                <div class="col-sm-2 control-label"></div>
+                <input type="button" class="btn btn-primary" @click="saveOrUpdate" value="确定"/>
+                &nbsp;&nbsp;<input type="button" class="btn btn-warning" @click="reload" value="返回"/>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- 选择菜单 -->
+<div id="dirLayer" style="display: none;padding:10px;">
+    <ul id="dirTree" class="ztree"></ul>
+</div>
+
+<script src="${request.contextPath}/statics/js/modules/map/maplayer.js?_${.now?long}"></script>
+</body>
+</html>
